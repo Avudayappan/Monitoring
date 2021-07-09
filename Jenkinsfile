@@ -25,7 +25,7 @@ pipeline {
                 script {
                     docker.withRegistry("https://index.docker.io/v1", "dockerhubtukarthik"){
                         def image = docker.build("precision")
-                        image.push('${env.BUILD_ID}')
+                        image.push('latest)
                     }
                     
                 }
