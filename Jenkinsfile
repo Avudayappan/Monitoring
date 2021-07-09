@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://index.docker.io/v1", "dockerhubtukarthik"){
-                        def image = docker.build("precision")
+                        def image = docker.build("tukarthik")
                         image.push("latest")
                     }
                     
