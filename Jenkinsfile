@@ -23,7 +23,7 @@ pipeline {
         stage('Create Image'){
             steps {
                 script {
-                    docker.withRegistry("https://hub.docker.com", "	dockerhubtukarthik"){
+                    docker.withRegistry("https://hub.docker.com", "dockerhubtukarthik"){
                         def image = docker.build("precision")
                         image.push('${env.BUILD_ID}')
                     }
