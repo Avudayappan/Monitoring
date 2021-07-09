@@ -25,7 +25,7 @@ pipeline {
                 script {
                     docker.withRegistry(
                     "https://608310603824.dkr.ecr.us-east-2.amazonaws.com",
-                    "ecr:us-east-2.amazonaws.com:ecr_creds"){
+                    "ecr_creds"){
                         image = docker.build("precision")
                         myImage.push('${env.BUILD_ID}')
                     }
