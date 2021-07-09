@@ -23,7 +23,7 @@ pipeline {
         stage('Create Image'){
             steps {
                 script {
-                    docker.withRegistry("https://608310603824.dkr.ecr.us-east-2.amazonaws.com", "ecr:us-east-2.amazonaws.com:ecr"){
+                    docker.withRegistry("https://608310603824.dkr.ecr.us-east-2.amazonaws.com", "ecr:us-east-2:ecr"){
                         def image = docker.build("precision")
                         image.push("latest")
                     }
