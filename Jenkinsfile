@@ -23,8 +23,8 @@ pipeline {
         stage('Create Image'){
             steps {
                 script {
-                    docker.withRegistry("tukarthik/sample-tomcat", "dockerhubtukarthik"){
-                        def image = docker.build()
+                    docker.withRegistry("", "dockerhubtukarthik"){
+                        def image = docker.build("tukarthik/sample-tomcat")
                         image.push("latest")
                     }
                     
