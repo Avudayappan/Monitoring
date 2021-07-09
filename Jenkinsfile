@@ -23,8 +23,8 @@ pipeline {
         stage('Create Image'){
             steps {
                 script {
-                    docker.withRegistry("", "dockerhubtukarthik"){
-                        def image = docker.build("tukarthik/sample-tomcat")
+                    docker.withRegistry("https://608310603824.dkr.ecr.us-east-2.amazonaws.com", "ecr:us-east-2.amazonaws.com:ecr_creds"){
+                        def image = docker.build("precision")
                         image.push("latest")
                     }
                     
