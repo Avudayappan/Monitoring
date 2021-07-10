@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("", "precisiondockerhub"){
-                        def image = docker.build("precisiondockerhub/precision")
+                        def image = docker.build("precisiondockerhub/helloworldtomcat")
                         image.push("latest")
                     }
                     
