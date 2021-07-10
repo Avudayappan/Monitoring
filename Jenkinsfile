@@ -1,31 +1,36 @@
 pipeline {
     agent any
-    environment {
-        registry = "608310603824.dkr.ecr.us-east-2.amazonaws.com/6c8f5ec-1ce1-4e94-80c2-aws"
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
     }
-   
     stages {
-        stage('Cloning Git') {
+        stage ('Initialize') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/akannan1087/myPythonDockerRepo']]])     
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
             }
         }
-  
-    // Building Docker images
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry
+
+        stage ('Build') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
         }
-      }
+
+        stage('Create Image'){
+            steps {
+                script {
+                       docker.withRegistry("https://608310603824.dkr.ecr.us-east-2.amazonaws.com/", "ecr:us-east-2:6c8f5ec-1ce1-4e94-80c2-aws"){
+                        def image = docker.build("precision")
+                           image.push("latest")
+                        
+                    }
+                    
+                }
+            }
+        }
     }
-   
-    // Uploading Docker images into AWS ECR
-    stage('Pushing to ECR') {
-     steps{  
-         script {
-                sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 608310603824.dkr.ecr.us-east-2.amazonaws.com'
-                sh 'docker push 608310603824.dkr.ecr.us-east-2.amazonaws.com/6c8f5ec-1ce1-4e94-80c2-aws:latest'
-         }
-        }
-      }
+}
