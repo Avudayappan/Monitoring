@@ -1,36 +1,36 @@
 pipeline {
-    agent any
-    tools {
-        maven 'Maven 3.3.9'
-        jdk 'jdk8'
+  environment {
+    registry = "sibia53@gmail.com/tomcat-helloworld"
+    registryCredential = 'sibidock24'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/Avudayappan/Monitoring,git'
+      }
     }
-    stages {
-        stage ('Initialize') {
-            steps {
-                sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                '''
-            }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
-
-        stage ('Build') {
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true install' 
-            }
-        }
-
-        stage('Create Image'){
-            steps {
-                script {
-                       docker.withRegistry("https://608310603824.dkr.ecr.us-east-2.amazonaws.com/", "ecr:us-east-2:6c8f5ec-1ce1-4e94-80c2-aws"){
-                        def image = docker.build("precision")
-                           image.push("latest")
-                        
-                    }
-                    
-                }
-            }
-        }
+      }
     }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }
+  }
 }
