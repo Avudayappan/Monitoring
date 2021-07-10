@@ -1,36 +1,35 @@
 pipeline {
-  environment {
-    registry = "sibia53@gmail.com/tomcat-helloworld"
-    registryCredential = 'sibidock24'
-    dockerImage = ''
-  }
-  agent any
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/Avudayappan/Monitoring,git'
-      }
+    agent any
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
     }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+    stages {
+        stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
+            }
         }
-      }
-    }
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
+
+        stage ('Build') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
         }
-      }
+
+        stage('Create Image'){
+            steps {
+                script {
+                    docker.withRegistry("", "dockerhubtukarthik"){
+                        def image = docker.build("tukarthik/sample-tomcat")
+                        image.push("latest")
+                    }
+                    
+                }
+            }
+        }
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-    }
-  }
 }
