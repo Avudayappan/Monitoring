@@ -30,7 +30,7 @@ public class HelloServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		PrintWriter writer = response.getWriter();
-		writer.println("<h1>Hello World from precision - 2</h1>");
+		writer.println("<h1>Hello World from precision - 1</h1>");
 		writer.close();
 	}
 
